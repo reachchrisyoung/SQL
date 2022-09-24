@@ -1,0 +1,34 @@
+/**Create Table**/
+-- Create a t-shirt database.
+CREATE TABLE eStore (id INTEGER PRIMARY KEY, item_name TEXT, item_size TEXT, Items_Sold INTEGER, Items_On_Hand INTEGER, Items_To_Order INTEGER, Item_Price INTEGER);
+
+INSERT INTO eStore VALUES 
+(1, "black_shirts", "S", 5, 1, 5, 12),
+(2, "black_shirts", "M", 9, 1, 9, 15),
+(3, "black_shirts", "L", 7, 1, 7, 18),
+(4, "black_shirts", "XL", 4, 1, 4, 21),
+(5, "white_shirts", "S", 5, 3, 5, 8),
+(6, "white_shirts", "M", 9, 3, 9, 11),
+(7, "white_shirts", "L", 7, 3, 7, 14),
+(8, "white_shirts", "XL", 4, 3, 4, 17),
+(9, "gray_shirts", "S", 5, 1, 5, 9),
+(10, "gray_shirts", "M", 9, 3, 9, 12),
+(11, "gray_shirts", "L", 7, 5, 7, 15),
+(12, "gray_shirts", "XL", 4, 8, 4, 18),
+(13, "green_shirts", "S", 5, 7, 5, 10),
+(14, "green_shirts", "M", 9, 2, 9, 13),
+(15, "green_shirts", "L", 7, 6, 7, 16),
+(16, "green_shirts", "XL", 4, 5, 5, 19)
+;
+
+/* See the data displayed from the table as-is. */
+SELECT * FROM eStore;
+
+/* Display database, ordered by price. */
+SELECT id, item_name, Item_Size, Item_Price FROM eStore ORDER BY Item_Price ASC;
+
+/* How many total t-shirts are on-hand for immediate order fulfillment? NOTE: Output heading name changed to "Total Items On Hand for Selling." */
+SELECT SUM(Items_On_Hand) AS "Total Items On Hand For Selling" FROM eStore;
+
+/* How many of each t-shirt are on-hand for incoming orders? Include unique identifier and item sizes, and start with the lowest quantity on-hand first. */
+SELECT id, Item_Name, Item_Size, Items_On_Hand FROM eStore ORDER BY Items_On_Hand ASC;
