@@ -1,0 +1,97 @@
+# Netflix Analytics using a Sourced Data Set
+
+/* In this Example query (PostgreSQL), I'm querying a database compiled of Netflix data to answer questions related to this data set. */
+
+-- #1 - How would I join these 2 tables? 
+
+/* The only matching column between the 2 tables is the show_id column,
+with each id being displayed in the column as either s# or s##... */
+
+-- How I initially looked at joining the 2 tables. 
+/* 
+SELECT * FROM "CharlotteChaze/BreakIntoTech"."netflix_people"
+JOIN "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+ON "netflix_people"."show_id" = "netflix_titles_info"."show_id"
+;
+*/
+
+/* A better way I have considered joining the tables, as an illustrative example.*/
+/*
+SELECT 
+people.show_id, people.director, titles.title, titles.type
+FROM "CharlotteChaze/BreakIntoTech"."netflix_people" people
+LEFT JOIN "CharlotteChaze/BreakIntoTech"."netflix_titles_info" titles
+ON people.show_id = titles.show_id
+;
+*/
+
+-- #2 - I want to know how many movie titles there are in the database -- not including tv shows.
+
+/*
+SELECT COUNT(*) AS "MOVIE TITLES" FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+WHERE type = 'Movie'
+;
+*/
+
+/* Identify the most recent batch of tv shows and/or movies added to the database. */
+/* Key Detail - there's a "Date_Added" TEXT column within the Netflix_Titles_Info table. */
+
+/* How I thought I should be finding the most recently added productions is as follows... */
+/*
+SELECT titles.date_added, titles.title
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" titles
+ORDER BY titles.date_added desc
+;
+*/
+
+/* A more succinct and direct way to find the most recently added item to the database 
+could be... */
+/*
+SELECT max(date(date_added))
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+;
+*/
+
+-- #3 List all of the movies and tv shows in alphabetical order.
+
+/*
+SELECT title from "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+ORDER BY title asc
+;
+*/
+
+-- #4 - Find the name of the director for a particular production from the database; for this example, find the director for the movie Bright Star. 
+
+/*
+SELECT titles.title AS "Titles", people.director AS "Directors"
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" titles
+JOIN "CharlotteChaze/BreakIntoTech"."netflix_people" people
+ON titles.show_id = people.show_id
+WHERE titles.title = 'Bright Star'
+;
+*/
+
+-- #5 - What is the oldest movie in the database?  Include the year it was made. 
+
+-- MY first attempt - technically it was a success, but omits a record that came out in the very same year as the one production displayed by the output. 
+/*
+SELECT title, release_year
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" 
+ORDER BY release_year LIMIT 1
+;
+*/
+
+--Alternative and more direct approach to get all of the matching productions from the same release_year. 
+/*
+SELECT title AS "Titles", release_year AS "Oldest Release Year"
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+WHERE type = 'Movie'
+AND release_year <= 
+(SELECT MIN(release_year)
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info"
+WHERE type = 'Movie')
+;
+*/
+/* The outcome yields 2 films from the same release_year. A subuery was necessary 
+to see all of the oldest movies without assuming only 1 was released at the earliest
+year listed in the data records. */
