@@ -1,0 +1,109 @@
+# NBA Stars and Conference Database and Stats
+/* Create table about the people and what they do here */
+-- Demonstrates a query that does a JOIN, and inlcudes both table-variable/label assignment and CASE / WHEN / THEN / ELSE query use.
+/* I pulled the data from https://www.kaggle.com/jacobbaruch/nba-player-of-the-week and customized the data for portolio purposes of brevity and convenience. */
+
+CREATE TABLE players(id INTEGER PRIMARY KEY AUTOINCREMENT,
+   Player            TEXT,
+   Height            TEXT,
+   Weight            INTEGER,
+   Age               INTEGER,
+   Height_CM         INTEGER,
+   Weight_KG         INTEGER
+   );
+
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Norman Powell','6''4',215,26,193,97);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('LeBron James','6''8',250,35,203,113);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Giannis Antetokounmpo','6''11',242,25,211,109);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Kristaps Porzingis','7''3',240,24,221,108);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Jayson Tatum','6''8',208,21,203,94);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Nikola Jokic','7''0',250,25,213,113);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Jaylen Brown','6''7',220,23,201,99);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Damian Lillard','6''3',195,29,190,88);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Pascal Siakam','6''9',230,25,206,104);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Damian Lillard','6''3',195,29,190,88);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Ben Simmons','6''10',230,23,208,104);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Kawhi Leonard','6''7',230,28,201,104);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Josh Richardson','6''6',200,26,198,90);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('DeMar DeRozan','6''7',220,30,201,99);
+INSERT INTO players(Player,Height,Weight,Age,Height_CM,Weight_KG) VALUES ('Giannis Antetokounmpo','6''11',242,25,211,109);
+
+
+CREATE TABLE NBA_Stats(id INTEGER PRIMARY KEY AUTOINCREMENT,
+   Team              TEXT,
+   Conference        TEXT,
+   Draft_Year        INTEGER,
+   Seasons_in_league INTEGER,
+   Predraft_Team     TEXT
+   );
+
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Toronto Raptors','East',2015,4,'UCLA');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Los Angeles Lakers','West',2003,16,'St. Vincent St. Mary High School (Ohio)');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Milwaukee Bucks','East',2013,6,'Filathlitikos Div II Greece (Greece)');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Dallas Mavericks','West',2015,4,'Real Betis Energia Plus (Spain)');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Boston Celtics','East',2017,2,'Duke');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Denver Nuggets','West',2014,4,'KK Mega Bemax (Serbia)');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Boston Celtics','East',2016,3,'California');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Portland Trail Blazers','West',2012,7,'Weber State');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Toronto Raptors','East',2016,3,'New Mexico State');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Portland Trail Blazers','West',2012,7,'Weber State');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Philadelphia Sixers','East',2016,3,'LSU');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Los Angeles Clippers','West',2011,8,'San Diego State');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Philadelphia Sixers','East',2015,4,'Tennessee');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('San Antonio Spurs','West',2009,10,'USC');
+INSERT INTO NBA_Stats(Team,Conference,Draft_Year,Seasons_in_league,Predraft_Team) VALUES ('Milwaukee Bucks','East',2013,6,'Filathlitikos Div II Greece (Greece)');
+
+/* Identify NBA Players with their current team and predraft team, starting with the player with the most seasoned player. */
+SELECT a.id AS "League Ranking", a.seasons_in_league AS "Seasons Played", players.player AS Name, a.team AS "Current Team", b.Predraft_team AS "Predraft Team" 
+FROM players
+JOIN NBA_Stats a
+ON players.id = a.id
+JOIN NBA_Stats b
+ON players.id = b.id
+GROUP BY "League Ranking"
+ORDER BY "Seasons Played" desc;
+
+--List NBA Players, including
+--(i) who they play for,
+--(ii) their draft year, and...
+--(iii) recorded seasons played.
+SELECT players.id, players.Player AS "NBA Star", players.age,  NBA_Stats.team, NBA_Stats.Draft_Year AS "Draft Year.", NBA_Stats.Seasons_in_League AS "NBA Seasons"
+    FROM players
+    JOIN NBA_Stats
+    ON players.id = NBA_Stats.id
+    ;
+
+--Beginning with the oldest of ages, list NBA Players 
+-- (i) who they play for, 
+-- (ii) their draft year, and... 
+-- (iii) recorded seasons played.
+SELECT players.Player AS "NBA Star", players.age,  NBA_Stats.team, NBA_Stats.Draft_Year AS "Draft Year.", NBA_Stats.Seasons_in_League AS "NBA Seasons"
+    FROM players
+    JOIN NBA_Stats
+    ON players.id = NBA_Stats.id
+    ORDER BY players.age desc;
+
+--List NBA Players 
+--(i) who they play for, 
+--(ii) their draft year, and... 
+--(iii) recorded seasons played; order the list of professional basketball players from least to most NBA Seasons played.
+SELECT players.Player AS "NBA Star", players.age,  NBA_Stats.team, NBA_Stats.Draft_Year AS "Draft Year.", NBA_Stats.Seasons_in_League AS "NBA Seasons"
+    FROM players
+    JOIN NBA_Stats
+    ON players.id = NBA_Stats.id
+    ORDER BY "NBA Seasons" asc;
+    
+/* Which NBA Conference is going to be the most difficult this year?  Essentially, I need to Rank the NBA Conferences by most to least challenging; this will be based on the most collective seasons in the NBA among the players listed within that conference- assuming all of the players in last season's rosters remain in-place. */
+/* What I'm trying to accomplish is identifying how much experience each conference has between the players on rosters specific to their respective conference. */
+SELECT NBA_Stats.Team, NBA_Stats.Conference, SUM(Seasons_in_league) AS "Player Total Seasons"  FROM NBA_Stats
+GROUP BY NBA_Stats.Team
+ORDER BY NBA_Stats.Conference;
+
+SELECT Conference, SUM(Seasons_in_league) AS "Overall NBA Seasons Experience by Players",
+   CASE
+      WHEN SUM(Seasons_in_league) >= 32 THEN "Most Challenging"
+      ELSE "Least Challenging "
+   END AS "Conference Difficulty"
+FROM NBA_Stats
+GROUP BY Conference;
+
