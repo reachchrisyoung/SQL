@@ -1,0 +1,59 @@
+/* This is a coding social application data display case example.*/
+/* Demonstrated SQL includes: 
+(a) CREATE TABLE & INSERT records
+(b) UPDATE entries
+(c) ALTER TABLE to ADD new data column to table -- simulating addition to table "after" social app has been launched and used
+(d) Setting default value for ALTER TABLE+ADD new column update
+(e) DELETE specific record -- in this case, removing minor activity (meaning anyone under 18 years of age). */
+
+/* Steps for this project -- 
+Step 1: CREATE a table to store my data.
+Step 2: INSERT a few example rows for the table.
+Step 3: Use an UPDATE statement to emulate what happens when editing data within the app.
+Step 4: Use an ALTER TABLE statement to ADD a column to the data set table; set default entry initially, then UPDATE records for new column data.
+Step 5: Use a DELETE statement to emulate what occurs when deleting the data within the app. */
+
+CREATE TABLE social_app (id INTEGER PRIMARY KEY AUTOINCREMENT,
+     first_name TEXT,
+     last_name TEXT,
+     age INTEGER,
+     sex TEXT)
+     ;
+     
+INSERT into social_app (first_name, last_name, age, sex) VALUES ("Alpha", "Person1", 24, "M");
+INSERT into social_app (first_name, last_name, age, sex) VALUES ("Bravo", "Person2", 17, "F");
+INSERT into social_app (first_name, last_name, age, sex) VALUES ("Charlie", "Person3", 32, "M");
+INSERT into social_app (first_name, last_name, age, sex) VALUES ("Delta", "Person4", 33, "F");
+
+/* View the data from the table as original input data. */
+SELECT * FROM social_app;
+
+/* Update last name format for current app users. Confirm update with SELECT query. */
+UPDATE social_app SET last_name = "Person_1" WHERE id=1;
+UPDATE social_app SET last_name = "Person_2" WHERE id=2;
+UPDATE social_app SET last_name = "Person_3" WHERE id=3;
+UPDATE social_app SET last_name = "Person_4" WHERE id=4;
+
+SELECT * FROM social_app;
+
+/* Add new column to current table data set, but with only a default value and nothing else.  Confirm update with SELECT query. */
+
+ALTER TABLE social_app ADD emotion TEXT default "unknown";
+
+SELECT * FROM social_app;
+
+/* Update all 4 user entries emotions, simulating 100% receptiveness and use of the new emotion feautre for the social app by its users. Confirm update through SELECT query. */
+
+UPDATE social_app SET emotion = "Motivated" WHERE id = 1; 
+UPDATE social_app SET emotion = "Excited" WHERE id = 2;
+UPDATE social_app SET emotion = "Flabbergasted" WHERE id = 3;
+UPDATE social_app SET emotion = "Empowered" WHERE id = 4;
+
+SELECT * FROM social_app;
+
+/* Demonstrate knowledge of record deletion SQL.  Remove minors, meaning users under the age of 18, from the social app.  Confirm change through SELECT query. */
+
+DELETE FROM social_app WHERE age < 18;
+
+SELECT * FROM social_app;
+
