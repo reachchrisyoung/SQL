@@ -1,0 +1,134 @@
+# Customer & Order Analytics
+
+--SQLiteStudio Example Query
+--Data pulled from https://www.dropbox.com/sh/tg18j6pkfhlxem3/AACPDvxCUJAAo7WPD0LJW_Iwa?dl=0&preview=BIT_DB
+
+--Began by looking at what kind of data is available between customers and JanSales
+--Select * FROM customers LIMIT 20
+--SELECT * FROM JanSales
+
+-- #!: Find the amount of orders placed in January.
+/*
+SELECT count(orderID) AS "Orders in January" FROM BIT_DB.JanSales
+*/
+
+-- #2: Identify the amount of orders for an iPhone from January Sales
+/*
+SELECT count(orderid) AS "January iPhone Sales"
+FROM BIT_DB.JanSales
+WHERE Product = 'iPhone';
+*/
+
+-- #3: List Customer Account Numbers for all orders placed within February.
+
+/*Still gets 1,000 Results
+SELECT customers.acctnum 
+FROM BIT_DB.customers
+JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderId
+*/
+
+
+-- NOTE: Duplicates were removed through the use of DISTINCT.
+/* Still gets 1,000 Results
+SELECT DISTINCT acctnum AS "Acct Numbers"
+FROM BIT_DB.customers buyers
+INNER JOIN BIT_DB.FebSales feb
+ON buyers.order_id = feb.orderId
+ORDER BY acctnum ASC
+*/
+
+--#4: Which product sold in January was the cheapest, and what was that product's price?
+/* FIRST ATTEMPT -- Success.
+SELECT DISTINCT product AS Product, MIN(price) AS Price FROM JanSales 
+*/
+
+-- SECOND ATTEMPT -- ineffective.
+/*
+SELECT DISTINCT product WHERE price IN 
+(SELECT MIN(price) FROM BIT_DB.JanSales)
+FROM BIT_DB.JanSales
+*/
+
+-- Researched solutions and tested various solution formats, seen below:
+
+/* 1st Solution - Success
+SELECT distinct product, price FROM BIT_DB.JanSales
+WHERE price IN (Select MIN(price) FROM BIT_DB.JanSales)
+*/
+
+/* 2nd Solution - Success
+SELECT distinct product, price FROM BIT_DB.JanSales
+ORDER BY price ASC LIMIT 1
+*/
+
+
+/* 3rd Solution - Success
+SELECT DISTINCT product, MIN(price) FROM BIT_DB.JanSales
+GROUP BY product, price
+ORDER BY price ASC LIMIT 1
+*/
+
+/* 4th Solution - Success 
+SELECT product, MIN(price) FROM BIT_DB.JanSales
+GROUP BY product, price
+ORDER BY price ASC LIMIT 1
+*/
+
+-- #5: Find the total revenue for each product sold in January.
+-- REMINDER: qty of products sold (listed as Quantity) & price of the products needed to calculate revenue (listed as price). 
+-- Columns I intend to use for this solution: Product, Quantity, price -- all in JanSales
+/* First attempt -- Got Stuck.
+SELECT product, Quantity, price FROM JanSales
+GROUP BY product
+ORDER BY price DESC
+*/
+
+/* Attempt 2 - Revenue column isn't lining up. 
+SELECT product AS Product, Quantity, price, SUM(Quantity*Price) AS REVENUE FROM BIT_DB.JanSales
+GROUP BY product
+ORDER BY price DESC
+*/
+
+/* Attempt 3 - Success and round Revenue Column to 2 decimal places. 
+SELECT product AS Product, ROUND(SUM(Quantity)*price,2) AS Revenue FROM BIT_DB.JanSales
+GROUP BY product
+ORDER BY price DESC
+*/
+
+-- #6: Multi-part question --
+/* (a) In February - which products were sold at 548 Lincoln St, Seattle, WA 98101,
+   (b) How many of each product were sold (at this location), and...
+   (c) Identify the Total Revenue (of the products sold in February at this location).
+*/
+/* First Attempt - Success 
+SELECT product AS Product, SUM(Quantity) AS Quantity, SUM(quantity)*price AS Revenue FROM BIT_DB.FebSales 
+WHERE location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY product
+*/
+
+-- #7: Give a quantity of customers who've ordered more than 2 products at a time during the month of February.  Include What the average amount spent for those customers was.
+/* 1st Attempt - Got Stuck.
+SELECT COUNT(customers.acctnum) AS "Customers", sum(quantity)*price AS Revenue FROM BIT_DB.FebSales 
+INNER JOIN BIT_DB.customers
+ON FebSales.orderID = customers.order_id
+WHERE Quantity > 1
+*/
+
+-- 2nd Attempt - I think this works; AVG $ Spent = 3.86.
+/*
+SELECT COUNT(customers.acctnum) AS "Customers", avg(quantity)*price AS "AVG $ Spent" FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON FebSales.orderID = customers.order_id
+WHERE Quantity > 2
+*/
+
+-- Starting Research
+
+/* Attempt #1 - Success
+SELECT COUNT(customers.acctnum) AS "Customers", avg(quantity*price) AS "AVG $ Spent" FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON FebSales.orderID = customers.order_id
+WHERE Quantity > 2
+*/
+
