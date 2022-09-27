@@ -142,3 +142,70 @@ WHERE location LIKE "%Los Angeles%"
 GROUP BY PRODUCT
 ORDER BY price DESC
 */
+
+
+-- MORE Questions for this Data Set
+
+-- #1: In New York, which locations received at least 3 orders in the month of January?  Include how many orders each of these locations had, in fact, received.
+/* 1st Attempt -- Got Stuck
+SELECT SUM(JanSales.orderID) AS "Total Orders Received", JanSales.location AS "Locations"
+FROM BIT_DB.JanSales
+WHERE location LIKE '%New York%' and COUNT(orderID) >= 3
+GROUP BY JanSales.location
+*/
+
+-- 2nd Attempt -- Struggling
+/*
+SELECT JanSales.Product, JanSales.Quantity, JanSales.location, COUNT(orderID) FROM BIT_DB.JanSales
+WHERE location LIKE "%NY%"
+GROUP BY location
+ORDER BY Amount DESC
+*/
+
+-- 3rd Attempt - Success
+/*
+SELECT DISTINCT location AS Location, COUNT(orderID) AS "Order Amount" FROM BIT_DB.JanSales
+WHERE location like "%NY%"
+GROUP BY location
+HAVING COUNT(orderID) > 2
+*/
+
+-- #2: Give the amount of each type of headphone sold during February
+-- 1st Attempt - Success
+/*
+SELECT Product, SUM(Quantity) AS "Amount Sold" FROM BIT_DB.FebSales
+WHERE Product LIKE "%headphone%" 
+GROUP BY Product
+*/
+
+-- #3: What was the average amount spent per account in February?
+-- Objective: Acquire the average amount spent per number of accounts.
+/* 1st Attempt - Success
+SELECT COUNT(acctnum) AS "Amount of Accounts", sum(quantity*price) / count(customers.acctnum) AS "AVG $ Spent" FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON customers.order_id = FebSales.orderID
+*/
+
+-- An alternative to answering this question could be...
+/*
+SELECT  acctnum AS Accoutns, avg(quantity*price) AS "AVG $ Spent" FROM BIT_DB.FebSales
+JOIN BIT_DB.customers
+ON customers.order_id = FebSales.orderID
+*/
+
+-- #4: What was the average quantity of products purchased per account in February?
+-- Objective: Aqcuire the overall average.
+-- 1st Attempt - Success
+/*
+SELECT COUNT(customers.acctnum) AS "# of Accounts", SUM(Quantity)/COUNT(customers.acctnum) AS "AVG Qty of Products Purchased Per Account" FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON customers.order_id = FebSales.orderID
+*/
+
+-- #5: Which product brought in the most revenue in January?  Include how much revenue that product brought in "in total" as well.
+/* 1st Attempt - Success
+SELECT product AS "Product w/Most Revenue in January", SUM(Quantity*price) AS "Total Revenue" FROM BIT_DB.JanSales
+GROUP BY product 
+ORDER BY "Total Revenue" DESC
+LIMIT 1
+*/
