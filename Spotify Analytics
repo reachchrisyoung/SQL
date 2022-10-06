@@ -1,0 +1,89 @@
+# Spotify Analytics
+
+-- For this project, I downloaded Spotify data from Kaggle.
+-- THEN, I created a table to insert Spotify Data into.
+-- FINALLY, I performed analytics on the data using SQL.
+
+-- Creating a table:
+/*
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+*/
+
+-- Now, I inserted the Spotify Data .csv into the Table.
+
+-- Next, I explored the data using the following SQL:
+
+-- Check to see what fields are in the data.
+/*
+SELECT * FROM BIT_DB.Spotifydata LIMIT 3
+*/
+
+-- Now, I began answering questions about the Spotify data.
+
+-- #1: What is the average danceability by artist and track?
+
+/*
+SELECT artist_name AS "Artist Name", track_name AS "Song Title", AVG(danceability) AS "AVG Danceability" 
+FROM BIT_DB.Spotifydata 
+GROUP BY "Song Title"
+ORDER BY artist_name ASC
+*/
+
+-- #2: Who are the top 10 artists based on popularity?
+/*
+SELECT Artist_Name, Popularity 
+FROM BIT_DB.Spotifydata 
+ORDER BY Popularity DESC LIMIT 10
+*/
+
+-- #3: What artist released the longest song?
+/*
+SELECT Artist_Name, Track_Name AS "Song Title", Duration_MS 
+FROM BIT_DB.Spotifydata
+ORDER BY Duration_MS DESC 
+LIMIT 1
+*/
+
+-- #4: What's the average danceability for the 10 most popular songs?
+/*
+SELECT artist_name AS "Artist Name", track_name AS "Song Title", AVG(danceability) AS "AVG Danceability" 
+FROM BIT_DB.Spotifydata 
+GROUP BY "Song Title"
+ORDER BY Popularity DESC 
+LIMIT 10
+*/
+
+-- #5: Rank all songs by Olivia Rodrigo in the database by popularity, beginning with the most popular song.
+/*
+SELECT Artist_Name, Track_Name AS "Song Title", Popularity 
+FROM BIT_DB.Spotifydata 
+WHERE Artist_Name IN (Select Artist_Name FROM BIT_DB.Spotifydata WHERE Artist_Name = "Olivia Rodrigo")
+ORDER BY popularity DESC
+*/
+
+-- #6: Of the songs that are NOT written in 4, rank them from fastest to slowest?
+/*
+SELECT Artist_Name, Track_Name, duration_ms, Time_Signature FROM BIT_DB.Spotifydata
+WHERE time_signature < 4
+ORDER BY duration_ms DESC
+*/
+
