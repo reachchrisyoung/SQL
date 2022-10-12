@@ -87,3 +87,18 @@ WHERE time_signature < 4
 ORDER BY duration_ms DESC
 */
 
+-- Demonstration use of a CTE.
+
+-- #6 Present the average popularity for the artists in the table, labeling each person as a Top Star in the output table.
+
+/*
+With tempTable AS (
+SELECT artist_name, popularity, AVG(popularity) AS average_popularity
+FROM Spotifydata 
+GROUP BY artist_name
+)
+SELECT s.artist_name, s.popularity, s.average_popularity, 'Top Star' AS tag 
+FROM tempTable s
+WHERE average_popularity >= 90
+ORDER BY average_popularity DESC
+*/
