@@ -1,0 +1,191 @@
+# SQL Murder Mystery
+# Database / Project at https://mystery.knightlab.com/#experienced.
+# This project allowed me to reach as high as a double join SELECT statement, connecting as many as 3 tables in a single query.
+# I had successfully found the hit man -- and discovered through additional queries that there was a mastermind who had bank rolled, and hired/ordered, the hit.
+
+-- Began by browsing the tables in the database.
+/* 
+SELECT name 
+FROM sqlite_master
+WHERE type = 'table'
+*/ 
+ -- Found I had a crime_scene_report data table accessbile.
+ 
+-- NEXT, I had navigated the various tables to see the data that was available;
+-- As a sample query (of multiple queries to get a feel for the data available):
+/*
+SELECT sql 
+FROM sqlite_master
+WHERE name = 'drivers_license'
+*/
+
+-- The following is a statement to kick off the project:
+/*
+A crime has taken place and the detective needs your help. 
+The detective gave you the crime scene report, but you somehow lost it. 
+You vaguely remember that the crime was a murder that occurred sometime on Jan.15, 2018 
+and that it took place in SQL City. Start by retrieving the corresponding crime scene 
+report from the police department’s database.
+*/
+
+-- I began by pulling up the report for the incident, on the date and 
+-- location aforementioned.
+/*
+SELECT *
+FROM crime_scene_report
+WHERE type = "murder" and city = "SQL City" AND date = "20180115"
+*/
+-- Murder on 20180115 in SQL City; security footage yielded 2 Witnesses:
+/*Witness 1 Lives on the last house on Northwestern Dr.; 
+  Witness 2 Annabel Lives Somewhere on Franklin Ave.
+*/
+
+--Find the 1st Witness
+/*
+SELECT name, address_number, address_street_name FROM person 
+WHERE address_street_name LIKE "Northwestern Dr"
+ORDER BY address_number DESC
+*/
+-- Witness 1 Information might be: Morty Schapiro, 4919 Northwestern Dr
+
+-- Find Witness 2
+/*
+SELECT name, address_number, address_street_name FROM person 
+WHERE name LIKE "%Annabel%"
+*/
+-- Witness 2 Information Found: Annabel Miller, 103 Franklin Street
+
+-- More Details on Witness 1:
+/*
+SELECT * FROM person 
+WHERE name = "Morty Schapiro"
+ORDER BY address_number DESC
+*/
+-- Witness 1 Information might be: Morty Schapiro, 4919 Northwestern Dr
+-- id = 14887, license id: 118009, ssn: 111564949
+
+-- Look at the 2 Witness Statements:
+/*
+SELECT person.name, interview.transcript
+FROM person JOIN interview
+ON person.id = interview.person_id
+WHERE person.id = 14887 OR person.id = 16371;
+*/
+
+-- Witness Statements found:
+/*
+Witness 1 States:
+He heard a gunshot and then saw a man run out carrying a gym bag exclusive to 
+Gold Members with the membership # starting with "48Z" displayed.  
+Witness adds: 
+The suspect was observed getting into a car; plate included "H42W". 
+
+Witness 2, Annabel Miller Person_Id 16371 matches interview person_id, states: 
+"I saw the murder happen, and I recognized the killer from the gym when I was 
+working out last week on January the 9th."
+*/
+
+
+-- Confirm if Witness 2 is a member of said gym.
+/*
+SELECT * FROM get_fit_now_member 
+WHERE name LIKE "%Annabel%"
+LIMIT 5
+*/
+-- Witness 2 Name Matches Current Member Database at the Gym id 90081, person_id 16371, 
+-- but Not Witness 1.  However, no check ins corresponding to the member roster.
+
+-- Find the membership_ids of members who checked in on the date from 
+-- the witness statement.
+/*
+SELECT * FROM get_fit_now_check_in
+WHERE check_in_date LIKE "20180109"
+*/
+-- 2 Entries match leading characters 48Z for membership: 
+-- 48Z7A 1600 to 1730
+-- 48Z55 1530 to 1700
+
+-- Put Names to Member IDs
+/*
+SELECT * FROM get_fit_now_member 
+WHERE id = "48Z7A" OR id = "48Z55"
+*/
+-- 48Z55, Person_ID 67318 Jeremy Bowers (Gold Member sinze 20160101)
+-- 48Z7A, Person_ID 28819 Joe Germuska (Gold Member since 20160305)
+
+-- See if I can match a license plate to one of the above, which includes H42W...
+/*
+SELECT a.id, a.name, b.gender, b.plate_number, b.car_make, b.car_model 
+FROM drivers_license b
+JOIN person a
+ON a.license_id = b.id
+WHERE b.plate_number LIKE "%H42W%" AND b.gender = "male"
+*/
+-- (Alternative Coding to get this answer)
+/*
+SELECT gender, plate_number, car_make, car_model 
+FROM drivers_license
+WHERE plate_number LIKE "%H42W%"
+*/
+
+/* RESULT:
+2 Male-owned vehicles: 0H42W2 Chevrolet Spark LS
+                       4H42WR Nissan Altima
+*/
+
+-- Did anyone attend events on the day of the murder?
+/*
+SELECT * FROM facebook_event_checkin 
+WHERE person_id = 16371
+*/
+
+/* Interesting findings...
+--Jeremy Bowers checked in to The Funky Grooves Tour on the date of the murder.
+-- Joe Germuska had no checkins
+--Annabel (Witness 2) also checked in to The Funky Grooves Tour on the date of the murder.
+*/
+
+-- Check for an interview by the 2 vehicle owners matching the license plate report.
+/*
+SELECT * FROM interview
+WHERE person_id = 28819 or person_id = 67318
+*/
+
+/*
+Jeremy Bowers confesses in interview statement to being the hitman, hired by a woman -- 
+5'5" (65") to 5'7" (67"); red hair.  Drives Tesla Model S.
+3 SQL Symphony Concert Attendances in Dec. 2017.
+*/
+
+-- SQL Query to see if my conclusion on who had done it was correct.
+/*
+INSERT INTO solution VALUES (1, 'Jeremy Bowers');
+
+SELECT value FROM solution;
+*/
+-- I win!  I found who had done it; Jeremy Bowers was the killer.
+
+-- Attempt to find the mastermind who bank rolled the hit.
+/*
+SELECT a.id, a.name, b.gender, b.hair_color, b.height, b.car_make, b.car_model, c.annual_income
+FROM drivers_license b
+JOIN person a
+ON a.license_id = b.id
+JOIN income c
+ON a.ssn = c.ssn
+WHERE b.gender = "female" AND b.car_make = "Tesla" AND b.car_model = "Model S"
+*/
+
+/*2 names had come up:
+-- Red Korb id 78881, and...
+-- Miranda Priestly id 99716
+*/
+
+-- Check Result:
+/*
+INSERT INTO solution VALUES (1, 'Miranda Priestly');
+
+SELECT value FROM solution;
+*/
+-- Miranda Priestly was the mastermind who bank rolled the hit.
+
