@@ -1,0 +1,169 @@
+-- For this project, I downloaded Spotify data from Kaggle.
+-- THEN, I created a table to insert Spotify Data into.
+-- FINALLY, I performed analytics on the data using SQL.
+
+-- Creating a table:
+/*
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+*/
+
+-- Now, I inserted the Spotify Data .csv into the Table.
+
+-- Next, I explored the data using the following SQL:
+
+-- Check to see what fields are in the data.
+/*
+SELECT * FROM BIT_DB.Spotifydata LIMIT 3
+*/
+
+-- Now, I began answering questions about the Spotify data.
+
+-- #1 Show Customers who are not in the United States
+/*
+SELECT CustomerID, FirstName, LastName, Country FROM chinook.customers
+WHERE Country != "USA"
+*/
+
+-- #2 Display the customers that are only from Brazil
+/*
+SELECT CustomerID, FirstName, LastName, Country FROM chinook.customers
+WHERE Country = "Brazil"
+*/
+
+-- #3 Find the invoices of customers who are from Brazil.
+-- customer's full name, Invoice ID, Date of Invoice, Billing Country
+/*
+SELECT a.FirstName, a.LastName, b.InvoiceID, b.InvoiceDate, b.BillingCountry FROM chinook.customers a
+JOIN chinook.invoices b
+ON a.CustomerID = b.CustomerID
+*/
+
+-- BONUS: Take the above a step further & separate the column InvoiceDate into 2 Separate Columns: Date and Time.
+
+-- #4 Produce a manifest of the Employees that are Sales Agents
+/*
+SELECT * FROM chinook.employees
+WHERE Title LIKE "Sales%" AND Title LIKE "%Agent"
+*/
+
+-- #5 Establish a Unique/Distinct List of Billing Countries (Hint: Leverage the Invoice Table)
+/*
+SELECT DISTINCT(BillingCountry) FROM chinook.invoices
+*/
+
+-- #6 Show the invoices associated with each sales agent's full name.
+/*
+SELECT c.FirstName, c.LastName, c.Title, a.* FROM chinook.invoices a
+JOIN chinook.customers b
+ON a.customerid = b.customerid
+JOIN chinook.employees c
+ON b.SupportRepID = c.EmployeeID
+ORDER BY c.LastName ASC
+*/
+
+-- #7 Show the Invoice Total, Customer Name, Country of the Customer, and the Sales Agent associated with the Invoice for (a) all invoices
+-- and (b) all customers.
+
+/*
+SELECT a.Total, b.FirstName, b.LastName, b.Country, c.FirstName, c.LastName, c.Title FROM chinook.invoices a
+JOIN chinook.customers b
+ON a.customerid = b.customerid
+JOIN chinook.employees c
+ON b.SupportRepID = c.EmployeeID
+ORDER BY c.LastName ASC
+*/
+
+-- #8 How many invoices were there in 2009?
+/*
+SELECT COUNT(*) FROM chinook.invoices 
+WHERE InvoiceDate LIKE "2009%"
+*/
+
+-- #9 What are the total sales for 2009?
+/*
+SELECT SUM(total) FROM chinook.invoices
+WHERE InvoiceDate LIKE "2009%"
+*/
+
+-- BONUS: Round off the result to 2 decimal places.
+
+-- #10 List the Invoice Line ID with the Track's Name
+/*
+SELECT i.InvoiceID, a.Title FROM chinook.invoice_items i
+JOIN chinook.tracks t
+ON t.TrackID = i.TrackID
+JOIN chinook.albums a
+ON a.AlbumID = t.AlbumID
+*/
+
+-- #11 Manifest the Invoice Line ID with a purchased track's name and artist. COME BACK TO -- THIS IS PROBLEMATIC
+/*
+SELECT i.InvoiceID, a.Title, a.Artist  FROM albums a
+JOIN chinook.tracks t
+ON t.AlbumID = a.AlbumID
+JOIN chinook.invoice_items i
+ON  i.TrackID = t.TrackID
+*/
+-- 2nd attempt
+/*
+SELECT i.InvoiceID, a.Title, z.Name FROM chinook.invoice_items i
+JOIN chinook.tracks t
+ON t.TrackID = i.TrackID
+JOIN chinook.albums a
+ON a.AlbumID = t.AlbumID
+JOIN chinook.artists z
+ON z.ArtistId = a.ArtistId
+*/
+
+-- #12 I want to see all the track titles with (a) their album name, (b) their media type, and (c) the given genre for that track.
+/*
+SELECT t.Name AS "Track Name", a.Title AS "Album Title", m.Name AS "Media Type", g.Name AS "Genre"  FROM chinook.tracks t
+JOIN chinook.genres g
+ON t.GenreID = g.GenreID
+JOIN chinook.media_types m 
+ON t.MediaTypeId = m.MediaTypeId
+JOIN chinook.albums a
+ON t.AlbumId = a.AlbumId
+*/
+
+-- #13 Show the total sales made per sales agent
+/*
+SELECT c.SupportRepId, e.EmployeeID FROM chinook.customers c
+JOIN chinook.employees e
+ON e.EmployeeId = c.SupportRepId
+*/
+
+
+
+SELECT e.EmployeeId, e.FirstName, e.LastName, e.Title, ROUND(SUM(Total),2) AS "Total Sales Per Rep"
+FROM chinook.invoices i 
+JOIN chinook.customers c
+ON i.CustomerId = c.CustomerId
+JOIN chinook.employees e
+ON e.EmployeeId = c.SupportRepId
+WHERE e.Title LIKE "Sales%" or e.Title LIKE "%Agent"
+GROUP BY e.EmployeeID
+
+
+UNION
+
+SELECT “, ”, ”, ”, ”, ”, ”, ”, SUM(Total) FROM chinook.invoices
