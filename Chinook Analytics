@@ -155,15 +155,16 @@ ON e.EmployeeId = c.SupportRepId
 
 
 SELECT e.EmployeeId, e.FirstName, e.LastName, e.Title, ROUND(SUM(Total),2) AS "Total Sales Per Rep"
-FROM chinook.invoices i 
+FROM chinook.invoices  
 JOIN chinook.customers c
-ON i.CustomerId = c.CustomerId
+ON invoices.CustomerId = c.CustomerId
 JOIN chinook.employees e
 ON e.EmployeeId = c.SupportRepId
 WHERE e.Title LIKE "Sales%" or e.Title LIKE "%Agent"
 GROUP BY e.EmployeeID
 
-
 UNION
 
-SELECT “, ”, ”, ”, ”, ”, ”, ”, SUM(Total) FROM chinook.invoices
+SELECT ' ', ' ', ' ', ' ', ROUND(SUM(Total), 2) FROM chinook.invoices
+
+
