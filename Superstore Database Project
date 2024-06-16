@@ -1,47 +1,82 @@
 -- Portfolio: SQL
--- Project: Superstore Database
+-- Project Name: Superstore Database
 -- 
--- Description:
+-- Executive Summary: Foundational Demonstration of SQL.
+-- Skils Demonstrated:
+-- 
+-- Beginning with my approach from looking at a new database to inspect what column headings of the database I am utilizing, and the nature of the data types:
+-- 
+-- (1) SELECT * (Select All)
+-- (2) query with LIMIT 5
+-- (3) COUNT()
+-- (4) sum: SUM() 
+-- (5) average pricing: AVG()
+-- (6) minimum pricing: MIN()
+-- (7) maximum pricing: MAX()
+-- (8) Text Strings Requiring Accurate Reference (due to case-sensitivity)
+-- (9) GROUP BY ___
+-- (10) WHERE ___ (and exclusionary language: WHERE ____ != )
+-- (11) ORDER BY ___ ASC/DESC
+-- (12) Relabel columns using AS "INSERT NEW NAME" 
+-- (13) Execution Time Improvement Explored
+-- 
+-- 
+-- Project Description:
+-- 
 -- In this project, I am writing SQL code to query a Superstore Database that I made.  
 -- 
 -- This project is intended to resemble data for a brand like Costco, Amazon, Walmart, TJ Maxx, Target, CVS, Dollar General, or Home Depot (just to name a few).
+-- -- NOTE: Comments are indicated by "--" (without quotes) at the beginning of each line.  
 -- 
--- NOTE: Comments are indicated by "--" (without quotes) at the beginning of each line.  
 -- 
--- To sample code execution:
--- (a) Visit: https://www.db-fiddle.com/f/PvBAaQwEUSWAxZCsg4Vmx/0
--- (b) Copy & paste code into the right-hand side, labeled: "Query SQL" (without quotes).
--- (c) Remove comment indictation ("--") at the far most left-hand side of each line for code youw ish to use.
+-- HOW TO EXPLORE THE PERFORMANCE OF THIS PORTFOLIO:
 -- 
--- OBJECTIVES: 
+-- 
+-- To sample this code for execution and confirm functionality:
+----- (a) Visit: https://www.db-fiddle.com/f/PvBAaQwEUSWAxZCsg4Vmx/0
+----- (b) Copy & paste code into the right-hand side, labeled: "Query SQL" (without quotes).
+----- (c) Remove comment indication ("--") at the far most left-hand side of each line.
+----- (d) Click "Run" (found in upper left of screen).
+-- 
+-- 
+-- NATURE OF QUESTIONS BEING ANSWERED IN THIS PORTFOLIO - 6 QUERY OBJECTIVES:
+-- 
 -- 
 -- Query #1: I want a result that orders the items in the table by their pricing.
 -- 
 -- Query #2: I will calculate statistics associated with this database.
 -- 
--- In this, I will find the specificed statistics regarding the item prices, including: 
+-- In this, I will find specificed statistics regarding item prices, including: 
 -- 
 -- (a) sum, 
 -- (b) average pricing, 
 -- (c) minimum pricing, 
 -- (d) maximum pricing,
 -- (e) count
--- 
 -- Note: This is a continuation of work within the same database; therefore, the pre-work usually done to underestand a new database being implemented can be omitted at this time due to redundancy.
 -- 
 -- Query #3:
--- I will produce a statistic about the price for items in a TEXT STRINGS data type;
--- for this database, that is the category column.
--- 
--- NOTE: 
--- 
--- I recognize that the values in the column labeled "category" are a Text Strings type -- this means that if I want to select a line item in there, such as "Kitchen Supplies", I will need to type it EXACTLY AS IT APPEARS IN THE DATABASE.
+-- I will produce a statistic about the price for items in a TEXT STRINGS data type; for this database, that is the category column.
+-- NOTE: I recognize that the values in the column labeled "category" are a Text Strings type -- this means that if I want to select a line item in there, such as "Kitchen Supplies", I will need to type it EXACTLY AS IT APPEARS IN THE DATABASE.
 -- 
 -- What this means:
--- 
 -- If "Kitchen Supplies" shows up as all lowercase letters "kitchen supplies", then I must reference it accordingly; likewise, if it shows up as "Kitchen Supplies", then I must reference the line item as it reads: meaning "Kitchen Supplies" in my SQL coding product.
 -- 
--- Query #4: 
+-- Query 4:
+-- Demonstrate the ability to zoom in on an important feature of a single product.
+-- Goal: Find out how much of a single product is remaining on-hand.
+-- 
+-- Query #5:
+-- Find what product we have the most of in-stock that we should consider promoting a flash sale for.
+-- 
+-- Query #6:
+-- Produce a list of electronics, starting with the product that is most in stock.
+-- 
+-- 
+-- 
+-- START SQL CODING SECTION
+-- 
+-- 
 -- 
 -- Query #1: 
 -- I want a result that orders the items in the table by their pricing.
@@ -248,4 +283,100 @@
 -- 
 -- RESULT: Success!  Outcome yields one category with corresponding values in statistical calculations in a single output.
 -- 
+-- Query 4:
+-- Demonstrate the ability to zoom in on an important feature of a single product.
 -- 
+-- Goal: Find out how much of a single product is remaining on-hand.
+-- 
+-- Step 1:
+-- Yield product name and quantity in stock.
+-- 
+-- SELECT 
+-- item_name AS "Product Name"
+-- , stock_quantity AS "Quantity in Stock"
+-- FROM superstore
+-- WHERE item_name = "Air Purifier";
+-- 
+-- Result: Success!  Output yielded the name of the product and the quantity remaining in stock.  
+-- 
+-- Step 2:
+-- Output multiple columns for this one product.
+-- 
+-- Goal: Declare each column, with output limited to one product item.
+-- 
+-- SELECT 
+-- item_id AS "Item ID"
+-- , item_name AS "Product Name"
+-- , category AS "Category"
+-- , price AS "Price"
+-- , stock_quantity AS "Quantity in Stock"
+-- , average_rating AS "Average Product Rating"
+-- FROM superstore
+-- WHERE item_name = "Air Purifier";
+-- 
+-- Result: Success!  All columns displayed for a single product.
+-- 
+-- Step 3:
+-- Explore reducing the coding output.
+-- 
+-- SELECT *
+-- FROM superstore
+-- WHERE item_name = "Air Purifier";
+-- 
+-- RESULT: Success!  Same output produced (less the labels from the Step 2 query) with less code.
+-- Execution time difference: Step 2 - 0.33ms
+--                            Step 3 - 0.26ms
+-- 
+-- Query 5:
+-- Find what product we have the most of in-stock that we should consider promoting a flash sale for.
+-- 
+-- SELECT 
+-- item_name AS "Product Name"
+-- , MAX(stock_quantity) AS "Most in Stock"
+-- FROM superstore
+-- GROUP BY item_name
+-- ORDER BY MAX(stock_quantity) DESC 
+-- LIMIT 1;
+-- 
+-- Query 5a:
+-- Sample to ensure coding pattern functions well.
+-- 
+-- SELECT 
+-- item_name AS "Product Name"
+-- , MAX(stock_quantity) AS "Product Most in Stock"
+-- FROM superstore
+-- GROUP BY item_name
+-- ORDER BY MAX(stock_quantity) DESC
+-- LIMIT 1;
+-- 
+-- RESULT: Success!
+-- 
+-- BENEFIT: Execution time reduction - Query 5:  0.77ms
+--                                   - Query 5a: 0.42ms
+-- 
+-- Query 6:
+-- Produce a list of electronics, starting with the product that is most in stock.
+-- 
+-- SELECT 
+-- *
+-- FROM superstore
+-- WHERE category != "Appliances"
+-- AND category != "Furnishings"
+-- AND category != "Kitchen Supplies"
+-- ORDER BY stock_quantity DESC;
+-- 
+-- RESULT: Sucess!  Utilized exclusionary statements to acquire desired outcome.
+-- 
+-- Query 6a: 
+-- Attempt to produce the same list with a faster execution time.
+-- 
+-- SELECT * FROM superstore
+-- WHERE category = "Electronics"
+-- ORDER BY stock_quantity DESC;
+-- 
+-- RESULT: Improved Achieved!
+-- Execution Time Query 6:  0.48ms
+--                Query 6a: 0.25ms
+-----------------------------------
+-----------------------------------
+-- End of Portfolio Project Piece.
