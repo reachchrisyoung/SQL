@@ -1,0 +1,250 @@
+-- Project: Superstore Database
+-- 
+-- Description:
+-- In this project, I am writing SQL code to query a Superstore Database that I made.  
+-- 
+-- This project is intended to resemble data for a brand like Costco, Amazon, Walmart, TJ Maxx, Target, CVS, Dollar General, or Home Depot (just to name a few).
+-- 
+-- NOTE: Comments are indicated by "--" (without quotes) at the beginning of each line.  
+-- 
+-- To sample code execution:
+-- (a) Visit: https://www.db-fiddle.com/f/PvBAaQwEUSWAxZCsg4Vmx/0
+-- (b) Copy & paste code into the right-hand side, labeled: "Query SQL" (without quotes).
+-- (c) Remove comment indictation ("--") at the far most left-hand side of each line for code youw ish to use.
+-- 
+-- OBJECTIVES: 
+-- 
+-- Query #1: I want a result that orders the items in the table by their pricing.
+-- 
+-- Query #2: I will calculate statistics associated with this database.
+-- 
+-- In this, I will find the specificed statistics regarding the item prices, including: 
+-- 
+-- (a) sum, 
+-- (b) average pricing, 
+-- (c) minimum pricing, 
+-- (d) maximum pricing,
+-- (e) count
+-- 
+-- Note: This is a continuation of work within the same database; therefore, the pre-work usually done to underestand a new database being implemented can be omitted at this time due to redundancy.
+-- 
+-- Query #3:
+-- I will produce a statistic about the price for items in a TEXT STRINGS data type;
+-- for this database, that is the category column.
+-- 
+-- NOTE: 
+-- 
+-- I recognize that the values in the column labeled "category" are a Text Strings type -- this means that if I want to select a line item in there, such as "Kitchen Supplies", I will need to type it EXACTLY AS IT APPEARS IN THE DATABASE.
+-- 
+-- What this means:
+-- 
+-- If "Kitchen Supplies" shows up as all lowercase letters "kitchen supplies", then I must reference it accordingly; likewise, if it shows up as "Kitchen Supplies", then I must reference the line item as it reads: meaning "Kitchen Supplies" in my SQL coding product.
+-- 
+-- Query #4: 
+-- 
+-- Query #1: 
+-- I want a result that orders the items in the table by their pricing.
+-- 
+-- Step 1: 
+-- Query the table in brevity to see the nature of the data I am working with.
+-- 
+-- Note: Since I don't know how large the database is, I am limiting my output to five rows, allowing for the data analyst to get an idea of the column headings to better understand what data is being utilized.
+-- 
+-- SELECT * 
+-- FROM superstore
+-- LIMIT 5;
+-- 
+-- Result: Six columns of data points are utilized.
+-- Note: Items are not listed here because the database is brief and the column headings are self-evident.
+-- 
+-- Step 2: 
+-- Find out how many items are in the table.
+-- 
+-- SELECT COUNT(item_name) AS "Number of Items in this database"
+-- FROM superstore;
+-- 
+-- Result: Output indicated 15 items listed in the database.
+-- 
+-- Step 3: 
+-- I expect to write a query that will...
+-- (a) generate a list of 15 items, 
+-- (b) sort those items by pricing, and...
+-- (c) ensure the items are listed, by their price, in ascending order (meaning the lowest priced item first).
+-- 
+-- SELECT 
+-- item_name AS "Product"
+-- , price AS "Current Item Pricing"
+-- FROM superstore
+-- ORDER BY price ASC;
+-- 
+-- RESULT: Query #1 successfully achieved.
+--
+-- Query #2: I will calculate statistics associated with this database.
+-- 
+-- In this, I will find the specificed statistics regarding the item prices, including: 
+-- 
+-- (a) sum, 
+-- (b) average pricing, 
+-- (c) minimum pricing, 
+-- (d) maximum pricing,
+-- (e) count
+-- 
+-- Note: This is a continuation of work within the same database; therefore, the pre-work usually done to underestand a new database being implemented can be omitted at this time due to redundancy.
+-- 
+-- Step 1:
+-- As this is a portfolio project and attempt to demonstrate understanding of SQL in real-world application, 
+-- I will take each line item on it's own to ensure that the desired output is achieved.
+-- 
+-- (a) Sum of Pricing
+-- 
+-- SELECT SUM(price) AS "SUM function - Prices Added Together"
+-- FROM superstore;
+-- 
+-- (b) average pricing
+-- 
+-- SELECT AVG(price) AS "Average Price"
+-- FROM superstore;
+-- 
+-- (c) minimum pricing, 
+-- 
+-- SELECT MIN(price) AS "Minimum Price"
+-- FROM superstore;
+-- 
+-- (d) maximum pricing,
+-- 
+-- SELECT MAX(price) AS "Maximum Price"
+-- FROM superstore;
+-- 
+-- (e) count
+-- 
+-- SELECT COUNT(price) AS "Count"
+-- FROM superstore;
+-- 
+-- (f) Attempt to produce a cumulative workproduct yielding outputs (a) - (e):
+-- NOTE: "AS" feature was not included here to express and display comprehensive understanding of what functions were intentionally placed in which column (on output display).
+-- SELECT 
+-- SUM(price)
+-- , AVG(price)
+-- , MIN(price)
+-- , MAX(price)
+-- , COUNT(price)
+-- FROM superstore;
+-- 
+-- RESULT: All of (a) - (f) were successful.
+-- 
+-- Query #3:
+-- I will produce a statistic about the price for items in a TEXT STRINGS data type;
+-- for this database, that is the category column.
+-- 
+-- NOTE: 
+-- 
+-- I recognize that the values in the column labeled "category" are a Text Strings type -- this means that if I want to select a line item in there, such as "Kitchen Supplies", I will need to type it EXACTLY AS IT APPEARS IN THE DATABASE.
+-- 
+-- What this means:
+-- 
+-- If "Kitchen Supplies" shows up as all lowercase letters "kitchen supplies", then I must reference it accordingly; likewise, if it shows up as "Kitchen Supplies", then I must reference the line item as it reads: meaning "Kitchen Supplies" in my SQL coding product.
+-- 
+-- Step 1:
+-- Inspect the variety of categories in the database:
+-- 
+-- SELECT 
+-- category
+-- , price
+-- FROM superstore;
+-- 
+-- Result: Produced 15 line items.
+-- Note: The quantity of items is not significant; what is important here is to acknowledge that there are a variety of of categories given in the database.
+-- 
+-- Step 2: 
+-- Attempt to organzize the output by the categories column.
+-- 
+-- SELECT 
+-- category AS "Categories"
+-- , price
+-- FROM superstore
+-- ORDER BY category ASC;
+-- 
+-- RESULT: 4 different categories given; different prices listed in each category.
+-- 
+-- Step 3: 
+-- Yield a statistic for any of the categories in the database.
+-- 
+-- Focus: The SUM() statistic function.
+-- 
+-- Goal: Attempt to simply put a query together that yields the SUM for a specific category.
+-- 
+-- Option A: 
+-- Select a single category from the database and incorporate price into SUM() -- meaning SUM(price).
+-- 
+-- SELECT 
+-- "Kitchen Supplies"
+-- , SUM(Price)
+-- FROM superstore;
+-- 
+-- Result: Undesirable output -- THIS WILL NOT WORK!
+-- 
+-- Rationale: While this query displays the desired category successfully, it fails to produce the sum total of prices that are exclusive to the desired category.
+-- 
+-- Option B:
+-- I want to see how I can group the the SUM(price) of each category, to see if I can produce a query that accurately reflects the correct number for the given category.
+-- 
+-- SELECT 
+-- category AS "Product Categories"
+-- , SUM(price) AS "Sum of Prices per Category"
+-- FROM superstore
+-- GROUP BY category
+-- ORDER BY category ASC;
+-- 
+-- RESULT: The output is sorted by category, with corresponding sums.  
+-- 
+-- Option C: Test to see if Option B query was a reliable query.
+-- 
+-- Goal: Produce another query that yields output that is sorted by the SUM() pricing.
+--
+-- SELECT 
+-- category AS "Product Categories"
+-- , SUM(price) AS "Sum of Prices per Category"
+-- FROM superstore
+-- GROUP BY category
+-- ORDER BY SUM(price) ASC;
+-- 
+-- RESULT: Success!  The Option B & Option C queries align in terms of category line item and SUM() pricing listed to the corresponding category.
+-- 
+-- BENEFIT: The above 2 queries will allow me to have a reliable reference whereby my single query will be able to yield the desired SUM of an individual category.  
+-- 
+-- Option D: 
+-- Attempt to use exclusionary coding to isolate an individual category and it's corresponding pricing added together in that single category from the database.
+-- 
+-- SELECT 
+-- "Electronics"
+-- , SUM(price) AS "Total Category Pricing Added Together"
+-- FROM superstore
+-- WHERE category != "Kitchen Supplies"
+-- AND category != "Appliances"
+-- AND category != "Furnishings";
+-- 
+-- Result: SUCCESS!  The output was exclusive to the desired category and the adding of all prices associated exclusively with the desired category.  
+-- 
+-- Additional commentary: One category was successfully displayed, while the SUM of all electronics pricing was displayed, while all other categories and all other pricing were successfully excluded.  
+-- 
+-- 
+-- Option E:
+-- Attempt to output multiple statistic data in a single query.
+-- 
+-- Goal: Change the category & add multiple statistic assessments.
+-- 
+-- SELECT 
+-- "Kitchen Supplies" AS Category
+-- , SUM(price)
+-- , AVG(price)
+-- , MIN(price)
+-- , MAX(price)
+-- , COUNT(price) AS "Number of Items in Category"
+-- FROM superstore
+-- WHERE category != "Electronics"
+-- AND category != "Appliances"
+-- AND category != "Furnishings";
+-- 
+-- RESULT: Success!  Outcome yields one category with corresponding values in statistical calculations in a single output.
+-- 
+-- 
